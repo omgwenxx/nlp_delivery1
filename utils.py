@@ -150,13 +150,37 @@ def preprocess(sentence):
     :return: array of processed sentence word tokens
     """
     text = sentence.translate(str.maketrans('', '', string.punctuation))  # remove punctuation
-    print(text)
+    #print(text)
     text = text.lower()  # lower case
-    print(text)
+    #print(text)
     text_tokens = word_tokenize(text)  # tokenizing words
-    print(text_tokens)
+    #print(text_tokens)
     tokens_without_sw = [word for word in text_tokens if not word in stopwords.words()]  # remove stop words
 
     ps = PorterStemmer()
     tokens_stem = [ps.stem(word) for word in tokens_without_sw]
-    return tokens_stem
+    return " ".join(tokens_stem)
+
+stemmer = PorterStemmer()
+def stemmed_words(tokens):
+    """
+    To be used in tokenize method to preprocess sentences.
+    :param tokens: tokenized sentence
+    :return: stemmed tokens
+    """
+    stemmed = []
+    for item in tokens:
+        stemmed.append(stemmer.stem(item))
+    return stemmed
+
+def tokenize(text):
+    """
+    To be used in CounterVectorizer object of sklearn in parameter tokenizer.
+    :param text: sentence as string
+    :return: stemmed tokens
+    """
+    tokens = nltk.word_tokenize(text)
+    tokens = [i for i in tokens if i not in string.punctuation]
+    tokens = [i for i in tokens if i not in stopwords.words()]
+    stems = stemmed_words(tokens)
+    return stems
