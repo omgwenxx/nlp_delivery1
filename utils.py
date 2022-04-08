@@ -13,6 +13,7 @@ from nltk.corpus import stopwords
 import string
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
+from sklearn.metrics.pairwise import cosine_similarity
 
 RANDOM_SEED = 123  # taken from task description
 import pickle
@@ -181,6 +182,17 @@ def tokenize(text):
     """
     tokens = nltk.word_tokenize(text)
     tokens = [i for i in tokens if i not in string.punctuation]
-    tokens = [i for i in tokens if i not in stopwords.words()]
+    # tokens = [i for i in tokens if i not in stopwords.words()] removes question words too!
     stems = stemmed_words(tokens)
     return stems
+
+def get_cosine_sim(q1,q2):
+    """
+    expects transformed questions strings using count vectorizer
+    """
+    result = []
+    for i in range(q1.shape[0]):
+        result.append(cosine_similarity(q1[i],q2[i]))
+    result = [item for sub_list in result for item in sub_list]
+    result = [item for sub_list in result for item in sub_list] # needs to be done 2 times
+    return np.asarray(result)
